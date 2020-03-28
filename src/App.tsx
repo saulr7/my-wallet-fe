@@ -1,23 +1,35 @@
 import React from 'react';
-import Greeeting from './components/greeting';
+
+import axios from 'axios'
+import Welcome from './components/pages/Welcome';
+import AppRouters from './components/pages/AppRouters';
+
+import {IsLoggIn} from './service/AuthService'
 
 
 function App() {
-  return (
-    <div className="container-fluid">
-      <div className="row">
-        <div className="col text-center">
 
-          <h2>
+  console.log(IsLoggIn());
 
-                Hello world
-          </h2>
+  if (IsLoggIn()) 
+  {
+    axios.get("http://localhost:5002/categories")
+    .then((res)=> {
+      console.log(res.data);
+    })
+    .catch((err)=> {
+      console.log(err);
+    })
+    return (
+      <AppRouters></AppRouters>
+    )
+  }
+  else {
 
-          <Greeeting msg="Hey"></Greeeting>
-        </div>
-      </div>
-    </div>
+    return (
+      <Welcome></Welcome>
   );
+}
 }
 
 export default App;

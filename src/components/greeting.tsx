@@ -11,21 +11,18 @@ type IProps = {
 
 class Greeeting extends React.Component<IProps, IState> {
 
-    constructor(props: IProps) {
-        super(props)
-
-        this.state = {
-            name : "Saulr"
-        }
-
-      }
-
+  state: IState;
+  
+  constructor(props: IProps) {
+    super(props);
+    this.state = { name: '100' };
+  }
 
     render() {
     
         return (
             <div>
-                {this.props.msg +" " + this.state.name}
+                { this.state.name}
             </div>
         )
     }
