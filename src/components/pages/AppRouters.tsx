@@ -8,6 +8,7 @@ import {
   useParams
 } from "react-router-dom";
 import { LogOut } from "../../service/AuthService";
+import Expenses from "./Expenses/Expenses";
 
 
 export default function AppRouters() {
@@ -22,7 +23,7 @@ export default function AppRouters() {
               <div className="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul className="navbar-nav mr-auto">
                   <li className="nav-item active">
-                    <Link className="nav-link" to="/">Home</Link>
+                    <Link className="nav-link" to="/expenses">Expenses</Link>
                   </li>
                   <li className="nav-item">
                     <Link  className="nav-link" to="/about">About</Link>
@@ -52,8 +53,8 @@ export default function AppRouters() {
               <Route path="/topics">
                 <Topics />
               </Route>
-              <Route path="/">
-                <Home />
+              <Route path="/expenses">
+                <Expenses/>
               </Route>
             </Switch>
           </div>
@@ -61,9 +62,6 @@ export default function AppRouters() {
   );
 }
 
-function Home() {
-  return <h2>Home</h2>;
-}
 
 function About() {
   return <h2>About</h2>;
@@ -86,11 +84,6 @@ function Topics() {
           </Link>
         </li>
       </ul>
-
-      {/* The Topics page has its own <Switch> with more routes
-          that build on the /topics URL path. You can think of the
-          2nd <Route> here as an "index" page for all topics, or
-          the page that is shown when no topic is selected */}
       <Switch>
         <Route path={`${match.path}/:topicId`}>
           <Topic />
