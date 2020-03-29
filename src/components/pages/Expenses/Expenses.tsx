@@ -6,10 +6,10 @@ import {
     Switch,
     Route,
     Link,
-    useRouteMatch,
-    useParams
+    useRouteMatch
   } from "react-router-dom";
 import Transactions from './Transactions';
+import NewTransaction from './NewTransaction';
 
 
 class Expenses extends React.Component<{}, {}>{
@@ -44,16 +44,12 @@ function ExpensesRoutes() {
     return (
       <div>
 
-        <div className="row">
-            <div className="col text-center">
-                    <button type="button" className="btn btn-primary">
-                        <i className="fa fa-plus" aria-hidden="true"></i>
-                        <span className="m-1">
-                            New
-                        </span>
-                    </button>
-            </div>
-        </div>
+          <div>
+
+              <NewTransaction/>
+          </div>
+
+       
 
         <ul className="nav nav-pills nav-fill">
             <li className="nav-item">
@@ -81,11 +77,6 @@ function ExpensesRoutes() {
     );
   }
 
-  function Topic() {
-    let { topicId } = useParams();
-    return <h3>Requested topic ID: {topicId}</h3>;
-  }
-  
   
 
 

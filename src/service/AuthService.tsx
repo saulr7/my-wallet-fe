@@ -2,7 +2,7 @@
 import {AlertError, AlertWarning} from '../service/Alerts'
 
 import Firebase from '../config/firebaseConfig'
-import {Axios} from '../config/config'
+import {axios} from '../config/config'
 
 
 import SignUpModel from '../models/SignUpModel'
@@ -61,9 +61,7 @@ export function LogOut()
 
 function RegisterUser(model : SignUpModel){
 
-    console.log(model);
-
-    Axios.post("/addUser", model)
+    axios.post("/addUser", model)
     .then((res)=> {
       console.log(res.data);
     })
