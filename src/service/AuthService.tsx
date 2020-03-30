@@ -23,7 +23,7 @@ export function SignUp(model: SignUpModel){
                 model.uid = token.user.uid;
                 RegisterUser(model)
                 localStorage.setItem("token", token.user.xa)
-                window.location.reload()
+                window.location.href = '/expenses'
             }
         })
         .catch(error => {
@@ -44,7 +44,8 @@ export function SignIn(model : SignInModel) {
             {
                 var token : loginResponModel =  {  user : resp.user  }
                 localStorage.setItem("token", token.user.xa)
-                window.location.reload()
+                // window.location.reload()
+                window.location.href = '/expenses'
             }
         })
         .catch(error => {

@@ -3,15 +3,14 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link,
-  useRouteMatch,
-  useParams
+  Link
 } from "react-router-dom";
 import { LogOut } from "../../service/AuthService";
 import Expenses from "./Expenses/Expenses";
-
+import Categories from "./Categories/Categories";
 
 export default function AppRouters() {
+
   return (
     <Router>
 
@@ -22,14 +21,11 @@ export default function AppRouters() {
 
               <div className="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul className="navbar-nav mr-auto">
-                  <li className="nav-item active">
-                    <Link className="nav-link" to="/expenses">Expenses</Link>
+                  <li className="nav-item font-weight-bold">
+                      <Link className="nav-link" to="/expenses">Expenses</Link>
                   </li>
-                  <li className="nav-item">
-                    <Link  className="nav-link" to="/about">About</Link>
-                  </li>
-                  <li className="nav-item">
-                    <Link className="nav-link" to="/topics">Topics</Link>
+                  <li className="nav-item font-weight-bold">
+                    <Link  className="nav-link" to="/categories">Categories</Link>
                   </li>
                 </ul>
                 <form className="form-inline my-2 my-lg-0">
@@ -47,11 +43,8 @@ export default function AppRouters() {
           <div>
 
             <Switch>
-              <Route path="/about">
-                <About />
-              </Route>
-              <Route path="/topics">
-                <Topics />
+              <Route path="/categories">
+                <Categories/>
               </Route>
               <Route path="/expenses">
                 <Expenses/>
@@ -62,44 +55,5 @@ export default function AppRouters() {
   );
 }
 
-
-function About() {
-  return <h2>About</h2>;
-}
-
-function Topics() {
-  let match = useRouteMatch();
-
-  return (
-    <div>
-      <h2>Topics</h2>
-
-      <ul>
-        <li>
-          <Link to={`${match.url}/components`}>Components</Link>
-        </li>
-        <li>
-          <Link to={`${match.url}/props-v-state`}>
-            Props v. State
-          </Link>
-        </li>
-      </ul>
-      <Switch>
-        <Route path={`${match.path}/:topicId`}>
-          <Topic />
-        </Route>
-        <Route path={match.path}>
-          <h3>Please select a topic.</h3>
-        </Route>
-      </Switch>
-    </div>
-  );
-}
-
-
-function Topic() {
-    let { topicId } = useParams();
-    return <h3>Requested topic ID: {topicId}</h3>;
-  }
   
   

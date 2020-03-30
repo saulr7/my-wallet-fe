@@ -2,14 +2,13 @@ import React from 'react'
 import { get_categories_by_user } from '../../../service/CategoryServices';
 import NewTransactionModel from '../../../models/NewTransactionModel';
 import { AddNewTransactionService } from '../../../service/TransactionService';
+import CategoyModel from '../../../models/CategoryModel';
+import NewCategory from '../Categories/NewCategory';
 
-interface ICategoy {
-    Id          : number;
-    Category    : string;
-  }
+
   
 interface IState {
-    categories : ICategoy[],
+    categories : CategoyModel[],
     CategoryId  : number;
     Amount      : number;
     UserUID     : string;
@@ -48,7 +47,7 @@ class NewTransaction extends React.Component<{}, IState>{
                 return
             var data = res.data
 
-            var categories : ICategoy[] = data.data
+            var categories : CategoyModel[] = data.data
 
             this.setState({ categories})
           })
@@ -102,14 +101,24 @@ class NewTransaction extends React.Component<{}, IState>{
 
             <div>
                 <div className="row">
+
+                    <div className="col text-right">
+
+                        <a className="btn btn-success collapsed m-2" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                            <i className="fa fa-plus" aria-hidden="true"></i>
+                            <span className="m-1">
+                                New Expense
+                            </span>
+                        </a>
+                        
+                    </div>
+
+                </div>
+
+                <div className="row">
                     <div className="col-12 col-md-8 offset-md-2 col-lg-6 offset-lg-3 text-center">
                           
-                            <a className="btn btn-success collapsed m-2" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-                                <i className="fa fa-plus" aria-hidden="true"></i>
-                                <span className="m-1">
-                                    New Expense
-                                </span>
-                            </a>
+                           
     
                             <div className="collapse p-2" id="collapseExample" >
                                 <div className="card card-body my-card">
@@ -124,7 +133,10 @@ class NewTransaction extends React.Component<{}, IState>{
                                                     )
                                                 })}
                                             </select>
-                                            <button type="button" className="btn btn-link btn-sm text-left">Add Category</button>
+                                            {/* <button type="button"  data-toggle="modal" data-target="#modalNewCategory" className="btn btn-link btn-sm text-left">Add Category</button> */}
+                                            <div>
+                                                <NewCategory/>
+                                            </div>
                                         </div>
                                         <div className="form-group">
                                             <label htmlFor="formGroupExampleInput2">Amount:</label>

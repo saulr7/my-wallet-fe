@@ -15,27 +15,38 @@ import NewTransaction from './NewTransaction';
 class Expenses extends React.Component<{}, {}>{
 
 
-render() {
-
-        
-
-        return (
-            <div className="container">
-                <Title Titulo="Expenses"></Title>
-
-                <Router>
-                    <Switch>
-                        <Route path="/expenses">
-                            <ExpensesRoutes/>
-                        </Route>
-                    </Switch>
-                </Router>
-            </div>
-        )
-
+    SetActive = (tab)=> {
+        console.log(tab);
     }
 
-}
+    render() {
+        
+            return (
+                <div className="container">
+                    <Title Titulo="Expenses"></Title>
+
+                    <div>
+
+                        <NewTransaction/>
+                        </div>
+
+                        <div>
+                        <Transactions></Transactions>
+                    </div>
+
+                    {/* <Router>
+                        <Switch>
+                            <Route path="/expenses">
+                                <ExpensesRoutes/>
+                            </Route>
+                        </Switch>
+                    </Router> */}
+                </div>
+            )
+
+        }
+
+    }
 
 
 function ExpensesRoutes() {
@@ -44,26 +55,25 @@ function ExpensesRoutes() {
     return (
       <div>
 
-          <div>
-
-              <NewTransaction/>
-          </div>
-
-       
-
         <ul className="nav nav-pills nav-fill">
             <li className="nav-item">
-                <Link className="nav-link active2"  to={`${match.url}/transactions`}>Transactions</Link>
+                <Link className="nav-link"  to={`${match.url}/transactions`}  >Transactions</Link>
             </li>
             <li className="nav-item">
                 <Link className="nav-link "  to={`${match.url}/charts`}>Charts</Link>
             </li>
-            {/* <li className="nav-item">
-                <a className="nav-link" href="#!">Link</a>
-            </li> */}
         </ul>
 
-        <Switch>
+        <div>
+
+            <NewTransaction/>
+        </div>
+
+        <div>
+            <Transactions></Transactions>
+        </div>
+
+        {/* <Switch>
             <Route path={`${match.path}/transactions`}>
                 <Transactions></Transactions>
             </Route>
@@ -72,7 +82,7 @@ function ExpensesRoutes() {
             </Route>
           <Route path={match.path}>
           </Route>
-        </Switch>
+        </Switch> */}
       </div>
     );
   }

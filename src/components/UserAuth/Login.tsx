@@ -3,14 +3,16 @@ import './login.css'
 
 import { SignIn } from '../../service/AuthService'
 import SignInModel from '../../models/SignInModel';
+import Loading from '../common/Loading';
 
 type IProps = {
-    
+  
   }
 
   interface IState {
     email :string;
     password : string;
+    loading   : boolean
   }
   
 
@@ -22,7 +24,8 @@ class Login extends React.Component<IProps, IState>{
     super(props);
     this.state = { 
       email : '',
-      password : ''
+      password : '',
+      loading : false
   };
   }
   emailChanged= (event)=> {
@@ -43,8 +46,10 @@ class Login extends React.Component<IProps, IState>{
   }
 
   SignIn = ()=>{
+    this.setState({loading : true})
     var model : SignInModel = { email : this.state.email,  password :this.state.password }
     SignIn(model)
+    this.setState({loading : false})
    
   }
   
@@ -108,6 +113,12 @@ class Login extends React.Component<IProps, IState>{
                       </div>
                   </div> */}
 
+
+                  <div className="row">
+                      <div className="col text-center">
+                          <Loading Loading={this.state.loading}/>
+                      </div>
+                  </div>
                  
           
                   <div className="form-group">

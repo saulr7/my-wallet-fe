@@ -24,6 +24,15 @@ export function AddNewTransactionService(model : NewTransactionModel) {
     
 }
 
+export function GetTransactionsByUser()
+{
+
+    var userUID = UserUID()
+
+    return axios.get('getTransactionsByUser/'+ userUID)
+    
+}
+
 function ValidateNewTransactionData(model : NewTransactionModel) : boolean
 {
     if(!model.CategoryId ||  Number(model.CategoryId) ===0 )

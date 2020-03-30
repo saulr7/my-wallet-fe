@@ -2,16 +2,18 @@ import React from 'react'
 
 import SignUpModel from '../../models/SignUpModel'
 import {SignUp} from '../../service/AuthService'
+import Loading from '../common/Loading';
 
 type IProps = {
     
 }
 interface IState {
-    email           :string;
-    firstName       :string;
-    lastaName       :string;
+    email           : string;
+    firstName       : string;
+    lastaName       : string;
     password        : string;
     confirmPassword : string;
+    loading         : boolean
   }
   
 
@@ -27,7 +29,8 @@ class Register extends React.Component<IProps, IState> {
             firstName       : '',
             lastaName       : '',
             password        : '',
-            confirmPassword : ''
+            confirmPassword : '',
+            loading         : false
         };
     }
 
@@ -62,10 +65,11 @@ class Register extends React.Component<IProps, IState> {
       }
     
       _SignUp = ()=>{
+        this.setState({loading : true})
         var model : SignUpModel = {email : this.state.email, firstName : this.state.firstName
             , lastaName : this.state.lastaName, password :this.state.password , confirmPassword : this.state.confirmPassword }
         SignUp(model)
-        return
+        this.setState({loading : false})
        
       }
 
@@ -167,6 +171,12 @@ class Register extends React.Component<IProps, IState> {
                           onChange={this.confirmPasswordChanged}  />
                     </div>
                      
+
+                    <div className="row">
+                      <div className="col text-center">
+                          <Loading Loading={this.state.loading}/>
+                      </div>
+                    </div>
             
                     <div className="form-group">
                         <div className={"row "}>

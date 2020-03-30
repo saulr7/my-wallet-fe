@@ -1,9 +1,28 @@
 import axios from 'axios'
 
-axios.defaults.baseURL = 'http://localhost:5002';
+var baseULR = ""
+
+if (process.env.NODE_ENV === "production"){
+    baseULR = "https://aqueous-sierra-62258.herokuapp.com"
+}
+
+else if (process.env.NODE_ENV === "test"){
+    baseULR = "http://localhost:8000"
+}
+
+else {
+    baseULR = "http://localhost:8000"
+}
+
+// baseULR = "https://aqueous-sierra-62258.herokuapp.com"
+
+axios.defaults.baseURL = baseULR;
 axios.defaults.headers.common['Authorization'] = `Bearer ${Token()}`
+axios.defaults.headers.common['Accept'] = `*/*`
 
 function JwtPayload() {
+
+
     var token = localStorage.getItem("token")
 
     if (!token) {
