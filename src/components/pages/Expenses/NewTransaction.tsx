@@ -1,101 +1,114 @@
-import React from 'react'
+import React , {useState, useEffect} from 'react'
 import { get_categories_by_user } from '../../../service/CategoryServices';
 import NewTransactionModel from '../../../models/NewTransactionModel';
-import { AddNewTransactionService } from '../../../service/TransactionService';
+import { AddNewTransactionService, GetTransactionsByUser, ValidateNewTransactionData } from '../../../service/TransactionService';
 import CategoyModel from '../../../models/CategoryModel';
 import NewCategory from '../Categories/NewCategory';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootDispatcher } from '../../../reducers/actions';
+import { InitialState } from '../../../reducers/store';
+import Loading from '../../common/Loading';
+import TransactionModel from '../../../models/Transaction';
+import { AlertError } from '../../../service/Alerts';
 
 
   
-interface IState {
+interface StateProps {
     categories : CategoyModel[],
-    CategoryId  : number;
-    Amount      : number;
-    UserUID     : string;
-    Comment     : string
+
   }
   
 
 
-class NewTransaction extends React.Component<{}, IState>{
+const NewTransaction : React.FC<{} > = () => {
 
-    state: IState;
- 
-    constructor(props) {
-        super(props);
-        
-        this.state = {
-            categories  : [],
-            Amount      : 0,
-            UserUID     : '', 
-            CategoryId  : 0,
-            Comment     : ''
+    const [CategoryId, setCategoryId] = useState(0);
+    const [Amount, setAmount] = useState(0);
+    const [Comment, setComment] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    var {categories} = useSelector<InitialState, StateProps>((state: InitialState) => {
+        return {
+            categories: state.categories,
+
+            
         }
-    }
+    });
+    
+    const dispatch = useDispatch();
+    const rootDispatcher = new RootDispatcher(dispatch);
 
 
-    componentDidMount()
-    {
-        this.GetCategories()
-    }
+    useEffect(()=> {
+        GetCategories()
+    }, [])
 
 
-    GetCategories = () => {
+    function GetCategories() {
+        // setLoading(true)
         get_categories_by_user()
         .then((res)=> {
+            setLoading(false)
             if (!res.data)
                 return
+            
             var data = res.data
-
             var categories : CategoyModel[] = data.data
 
-            this.setState({ categories})
+            rootDispatcher.LoadCategories(categories)
+
           })
           .catch((err)=> {
+            setLoading(false)
             console.log(err);
           })
     }
 
-    OnCategoryChange = (event)=> {
-        var CategoryId = event.target.value
-        this.setState({
-            CategoryId : CategoryId
-        })
+    function GetTransactions () {
+        rootDispatcher.LoadTransactions([])
+        setLoading(true)
+        GetTransactionsByUser()
+        .then((res) => {
+            setLoading(false)
+            if (!res.data)
+                return
+            var data = res.data
+
+            var transactions : TransactionModel[] = data.data
+            
+            rootDispatcher.LoadTransactions(transactions)
+
+        }).catch((err) => {
+            setLoading(false)
+            AlertError('Something went wrong')
+        });
     }
 
-    OnAmountChange = (event) => {
-        var Amount = event.target.value
 
-        this.setState({
-            Amount : Amount
-        })
-
-    }
-   
-    OnCommentChange = (event) => {
-        var Comment = event.target.value
-
-        this.setState({
-            Comment : Comment
-        })
-
-    }
-
-    AddNewTransaction = ()=> {
+    function AddNewTransaction () {
         var model: NewTransactionModel ={
-            Amount : this.state.Amount,
-            CategoryId : this.state.CategoryId,
-            UserUID : '',
-            Comment : this.state.Comment
+            Amount      : Amount,
+            CategoryId  : CategoryId,
+            UserUID     : '',
+            Comment     : Comment
 
         }
 
+        if(!ValidateNewTransactionData(model))
+            return 
+
         AddNewTransactionService(model)
-       
+        .then((res) => {
+            GetTransactions()
+            return true
+        }).catch((err) => {
+            console.log(err);
+            AlertError('Something went wrong')
+            return  false
+        });
+        
     }
 
-
-    render() {
 
         return (
 
@@ -125,9 +138,9 @@ class NewTransaction extends React.Component<{}, IState>{
                                     <form>
                                         <div className="form-group">
                                             <label htmlFor="formGroupExampleInput">Category:</label>
-                                            <select className="custom-select" onChange={this.OnCategoryChange}>
+                                            <select className="custom-select" onChange={e => setCategoryId( parseInt (e.target.value))}>
                                                 <option >Category:</option>
-                                                {this.state.categories.map((category, index)=> {
+                                                {categories.map((category, index)=> {
                                                     return (
                                                     <option key={index} value={category.Id}>{category.Category}</option>
                                                     )
@@ -145,7 +158,7 @@ class NewTransaction extends React.Component<{}, IState>{
                                                 className="form-control" 
                                                 id="formGroupExampleInput2" 
                                                 placeholder="0.00"
-                                                onChange={this.OnAmountChange} />
+                                                onChange={e => setAmount( parseFloat( e.target.value))} />
                                         </div>
                                        
                                         <div className="form-group">
@@ -154,14 +167,14 @@ class NewTransaction extends React.Component<{}, IState>{
                                                 className="form-control" 
                                                 id="formGroupExampleInput2" 
                                                 placeholder="Comment"
-                                                onChange={this.OnCommentChange}
+                                                onChange={e => setComment(e.target.value)}
                                                 >
                                             </textarea>
                                         </div>
                                         <button 
                                             type="button" 
                                             className="btn btn-primary"
-                                            onClick={this.AddNewTransaction}>Add</button>
+                                            onClick={AddNewTransaction}>Add</button>
                                     </form>
 
                                 </div>
@@ -169,10 +182,17 @@ class NewTransaction extends React.Component<{}, IState>{
 
                     </div>
                 </div>
+
+                <div className="row">
+                    <div className="col text-center">
+                        <Loading Loading={loading}/>
+                    </div>
+                </div>
+
             </div>
         )
 
-    }
+    
 
 }
 

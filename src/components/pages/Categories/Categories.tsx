@@ -1,57 +1,74 @@
-import React from 'react'
+import React , {useState, useEffect} from 'react'
 import Title from '../../common/Title'
 import CategoyModel from '../../../models/CategoryModel';
-import { get_categories_by_user } from '../../../service/CategoryServices';
+import { get_categories_by_user, remove_category } from '../../../service/CategoryServices';
 import NewCategory from './NewCategory';
 import Loading from '../../common/Loading';
+import { AlertSuccess, AlertError } from '../../../service/Alerts';
+import { InitialState } from '../../../reducers/store';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootDispatcher } from '../../../reducers/actions';
 
 
+interface StateProps {
+    categories : CategoyModel[]
+}
 
-interface IState {
-    categories : CategoyModel[],
-    loading    : boolean
-  }
+const Categories : React.FC <{}> = ()=> {
+
+    const [loading, setLoading] = useState(false);
+
+    var {categories} = useSelector<InitialState, StateProps>((state: InitialState) => {
+        return {
+            categories: state.categories,
+            
+        }
+    });
+
+
+    const dispatch = useDispatch();
+    const rootDispatcher = new RootDispatcher(dispatch);
+
+
+    useEffect(() => {
+      
+        get_data()            
+          
+      }, []);
+
   
 
-class Categories extends React.Component<{}, IState> {
-
-    state : IState
-
-    constructor(props) {
-        super(props);
-        
-        this.state = {
-            categories : [],
-            loading     : false
+        function RemoveCategory(id) {
+            setLoading(true)
+            remove_category(id)
+            .then((res) => {
+                setLoading(false)
+                 get_data()
+                AlertSuccess("Category removed")
+            }).catch((err) => {
+                setLoading(false)
+                console.log(err);
+                AlertError("Something went wrong")
+            });
         }
-    }
 
-    componentDidMount()
-    {
-        this.GetCategories()
-    }
+        function get_data() {
 
-    GetCategories = () => {
-        this.setState({loading : true})
-        get_categories_by_user()
-        .then((res)=> {
-            this.setState({loading : false})
-            if (!res.data)
-                return
-            var data = res.data
-
-            var categories : CategoyModel[] = data.data
-
-            this.setState({ categories})
-          })
-          .catch((err)=> {
-            this.setState({loading : false})
-            console.log(err);
-          })
-    }
-
-
-    render() {
+            setLoading(true)
+            get_categories_by_user()
+            .then((res)=> {
+                setLoading(false)
+                if (!res.data)
+                    return
+                var data = res.data
+    
+                var categories : CategoyModel[] = data.data
+    
+                rootDispatcher.LoadCategories(categories)
+                // setCategories(categories)
+              })
+              .catch((err)=> {
+              })}  
 
         return (
             <div className="container">
@@ -70,7 +87,7 @@ class Categories extends React.Component<{}, IState> {
 
                 <div className="row">
                     <div className="col text-center">
-                        <Loading Loading={this.state.loading}/>
+                        <Loading Loading={loading}/>
                     </div>
                 </div>
 
@@ -78,12 +95,15 @@ class Categories extends React.Component<{}, IState> {
                     <div className="col">
 
                         <div className="list-group">
-                            {this.state.categories.map((category, index)=> {
+                            {categories.map((category, index)=> {
                                 return (
                                     <a key={index} href="#!" className="list-group-item list-group-item-action flex-column align-items-start">
                                         <div className="d-flex w-100 justify-content-between">
                                             <h5 className="mb-1">{category.Category}</h5>
-                                            <button className="btn btn-danger">
+                                            <button 
+                                                className="btn btn-danger"
+                                                onClick={e =>  RemoveCategory(category.Id)}
+                                                >
                                                 <i className="fa fa-trash-o" aria-hidden="true"></i>
                                             </button>
                                         </div>
@@ -101,7 +121,7 @@ class Categories extends React.Component<{}, IState> {
             </div>
         )
 
-    }
-
 }
+
+
 export default Categories

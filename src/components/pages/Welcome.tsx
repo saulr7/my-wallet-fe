@@ -38,8 +38,10 @@ function Welcome() {
                     <div className="row pt-3 mt-3">
                         <div className="col text-center">
                             <h3 className="display-4 font-weight-bold">My Wallet</h3>
+                            <hr/>
                         </div>
                     </div>
+
 
                             
                     <div className="row text-center">

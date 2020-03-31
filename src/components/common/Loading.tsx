@@ -1,5 +1,4 @@
 import React from 'react'
-import { Interface } from 'readline';
 
 interface IProps {
     Loading : boolean

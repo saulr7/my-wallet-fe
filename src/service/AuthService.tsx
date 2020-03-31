@@ -23,7 +23,6 @@ export function SignUp(model: SignUpModel){
                 model.uid = token.user.uid;
                 RegisterUser(model)
                 localStorage.setItem("token", token.user.xa)
-                window.location.href = '/expenses'
             }
         })
         .catch(error => {
@@ -65,6 +64,7 @@ function RegisterUser(model : SignUpModel){
     axios.post("/addUser", model)
     .then((res)=> {
       console.log(res.data);
+      window.location.href = '/expenses'
     })
     .catch((err)=> {
       console.log(err);

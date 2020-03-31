@@ -1,64 +1,94 @@
-import React from 'react'
-import { GetTransactionsByUser } from '../../../service/TransactionService'
-import { AlertError } from '../../../service/Alerts';
+import React , {useState, useEffect} from 'react'
+import { GetTransactionsByUser, remove_transaction } from '../../../service/TransactionService'
+import { AlertError, AlertSuccess } from '../../../service/Alerts';
 import TransactionModel from '../../../models/Transaction';
 import DatePicker from 'react-datepicker'
 import "react-datepicker/dist/react-datepicker.css";
 import NoData from '../../common/NoData';
 import Loading from '../../common/Loading';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootDispatcher } from '../../../reducers/actions';
+import { InitialState } from '../../../reducers/store';
 
-interface IState {
+interface StateProps {
     transactions : TransactionModel[],
-    startDate    : Date,
     loading      : boolean
 }
 
-class Transactions extends React.Component<{}, IState> {
+const Transactions :  React.FC<{}> = () => {
 
-    state: IState;
- 
-    constructor(props) {
-        super(props);
-        
-        this.state = {
-          transactions : [],
-          startDate : new Date(),
-          loading   : false
+    const [loading, setLoading] = useState(false);
+
+    var {transactions} = useSelector<InitialState, StateProps>((state: InitialState) => {
+        return {
+            transactions : state.transactions,
+            loading       : state.loading
+            
         }
-    }
-
-    componentDidMount(){
-        this.GetTransactions()
-    }
+    });
 
 
-    GetTransactions = ()=> {
-        this.setState({loading : true})
+    const dispatch = useDispatch();
+    const rootDispatcher = new RootDispatcher(dispatch);
+
+ 
+    // constructor(props) {
+    //     super(props);
+        
+    //     this.state = {
+    //       transactions : [],
+    //       startDate : new Date(),
+    //       loading   : false
+    //     }
+    // }
+
+
+    useEffect(() => {
+
+        GetTransactions()
+
+    }, [])
+
+
+
+    function GetTransactions () {
+        rootDispatcher.LoadTransactions([])
+        setLoading(true)
         GetTransactionsByUser()
         .then((res) => {
-            this.setState({loading : false})
+            setLoading(false)
             if (!res.data)
                 return
             var data = res.data
 
             var transactions : TransactionModel[] = data.data
             
-            this.setState({ transactions})
+            rootDispatcher.LoadTransactions(transactions)
 
         }).catch((err) => {
-            this.setState({loading : false})
+            setLoading(false)
             AlertError('Something went wrong')
         });
     }
 
-    setStartDate = (date)=>{
 
-        console.log(date);
 
+    function removeTransaction (id) {
+
+        setLoading(true)
+        remove_transaction(id)
+        .then((res) => {
+            setLoading(false)
+            GetTransactions()
+            AlertSuccess("Category removed")
+        }).catch((err) => {
+            setLoading(false)
+            console.log(err);
+            AlertError("Something went wrong")
+        });
     }
 
 
-    render() {
 
         return (
             <div>
@@ -68,30 +98,7 @@ class Transactions extends React.Component<{}, IState> {
 
                 <div className="row">
                     <div className="col text-center">
-                        <Loading Loading={this.state.loading}/>
-                    </div>
-                </div>
-
-                <a className="btn btn-link collapsed" data-toggle="collapse" href="#collapseFilter" aria-expanded="false" aria-controls="collapseExample">
-                    <i className="fa fa-filter" aria-hidden="true"></i>
-                </a>
-                <div className="collapse" id="collapseFilter" >
-                    <div className="row p-2">
-                        <div className="col-12 col-md-4 offset-md-2 text-center">
-                            <span className="p-2">From:</span>
-                            <i className="fa fa-calendar  fa-lg p-1" aria-hidden="true"></i>
-                            <DatePicker selected={this.state.startDate} onChange={date => this.setStartDate(date)} />
-                        </div>
-                        <div className="col-12 col-md-4  text-center">
-                            <span className="p-2">To:</span>
-                            <i className="fa fa-calendar  fa-lg p-1" aria-hidden="true"></i>
-                            <DatePicker selected={this.state.startDate} onChange={date => this.setStartDate(date)} />
-                        </div>
-                        <div className="col-12 text-center m-2 p-2">
-                            <button 
-                                type="button" 
-                                className="btn btn-primary">Load</button>
-                        </div>
+                        <Loading Loading={loading}/>
                     </div>
                 </div>
 
@@ -101,13 +108,13 @@ class Transactions extends React.Component<{}, IState> {
                 <div className="row">
 
                     <div className="col text-center">
-                        <NoData noData={this.state.transactions.length ===0} Message="Add new expenses" ></NoData>
+                        <NoData noData={transactions.length ===0} Message="Add new expenses" ></NoData>
                     </div>
                 </div>
 
 
 
-                <table className={"table  bg-white " + (this.state.transactions.length ===0 ? "d-none" : "")}>
+                <table className={"table  bg-white " + (transactions.length ===0 ? "d-none" : "")}>
                     <thead className="thead-dark">
                         <tr>
                         <th>Category</th>
@@ -119,14 +126,16 @@ class Transactions extends React.Component<{}, IState> {
                     <tbody>
 
                         {
-                            this.state.transactions.map((transaction, index)=> {
+                            transactions.map((transaction, index)=> {
                                 return (
                                     <tr key={index}>
                                         <td >{transaction.Category}</td>
                                         <td>{transaction.CreatedAtDate}</td>
                                         <td>{ transaction.Amount.toFixed(2)}</td>
                                         <td>
-                                            <button className="btn btn-danger">
+                                            <button 
+                                                className="btn btn-danger"
+                                                onClick={()=> removeTransaction(transaction.Id)}>
                                                 <i className="fa fa-trash-o" aria-hidden="true"></i>
                                             </button>
                                         </td>
@@ -141,7 +150,7 @@ class Transactions extends React.Component<{}, IState> {
             </div>
         )
 
-    }
+
 
 
 }

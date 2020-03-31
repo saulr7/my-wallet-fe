@@ -98,21 +98,6 @@ class Login extends React.Component<IProps, IState>{
                         onChange={this.passwordChangeds}  />
                   </div>
           
-                  {/* <div className="row"> 
-                      <div className="col text-center">
-                            <Loading Cargando={this.state.Cargando} />
-                      </div>
-                  </div> */}
-
-                  {/* <div className={"row " + (EsNavegadorCompatibleService() ? "d-none" : "")}>
-                      <div className="col text-center">
-                        <div className="alert alert-danger" role="alert">
-                          <strong>Oh snap!</strong> Esta aplicación sólo es compatible con los navegadores Google Chrome y Firefox.
-                        </div>
-
-                      </div>
-                  </div> */}
-
 
                   <div className="row">
                       <div className="col text-center">
@@ -122,7 +107,7 @@ class Login extends React.Component<IProps, IState>{
                  
           
                   <div className="form-group">
-                      <div className={"row "}>
+                      <div className={"row  mt-3"}>
                           <div className="col col-sm-12 col-md-8 offset-md-2  justify-content-center d-flex pt-2 mt-2" >
                               <button 
                                 type="submit" 
@@ -132,11 +117,11 @@ class Login extends React.Component<IProps, IState>{
                       </div>
                   </div>
 
-                  <div className="row">
+                  {/* <div className="row">
                     <div className="col">
                         <button type="button" className="btn btn-link">Create account</button>
                     </div>
-                  </div>
+                  </div> */}
 
 
             </div>
